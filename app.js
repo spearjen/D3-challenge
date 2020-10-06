@@ -1,3 +1,6 @@
+//state abbreviations not appearing on screen, show in console
+//does not resize for smaller screen
+
 // code for the chart function that automatically resizes
 function makeResponsive() {
 
@@ -6,18 +9,18 @@ function makeResponsive() {
 
     // clear svg if not empty    
     if (!svgArea.empty()) {
-        svg.Area.remove();
+        svgArea.remove();
     }
 
     // svg wrapper dimensions are determined by browser width and height
-    var svgWidth = 1000;
-    var svgHeight = 600;
+    var svgWidth = window.innerHeight;
+    var svgHeight = window.innerWidth-1000;
 
     var margin = {
-        top:50,
-        right:50,
-        bottom:50,
-        left:50
+        top:150,
+        right:150,
+        bottom:150,
+        left:150
     };
 
     var width = svgWidth-margin.left-margin.right;
@@ -76,15 +79,15 @@ function makeResponsive() {
         // create scales 
         var xPoverty = d3.scaleLinear()
             .domain(d3.extent(lifeData.map(d=>d.poverty)))
-            .range([0,width]);
+            .range([0,width+200]);
         
         var xAge = d3.scaleLinear()
             .domain(d3.extent(lifeData.map(d=>d.age)))
-            .range([0,width]);
+            .range([0,width+200]);
 
         var xIncome = d3.scaleLinear()
             .domain(d3.extent(lifeData.map(d=>d.income)))
-            .range([0,width]);
+            .range([0,width+200]);
 
         // var xLinearList=[xPoverty,xAge,xIncome];
             
@@ -114,13 +117,8 @@ function makeResponsive() {
         chartGroup.append("g")
             .call(yAxis);
 
-        // // circle generator
-        // var stateCircle = d3.circle()
-        //     .cx(d=>xLinearScale2(d.healthcare))
-        //     .cy(d=>yLinearScale3(d.income));
-
         // append circle
-        chartGroup.selectAll(".scatter")
+        var circlesGroup=chartGroup.selectAll(".scatter")
             .data(lifeData)
             .enter()
             .append("circle")
@@ -131,25 +129,40 @@ function makeResponsive() {
             .attr("r", 15)
             .classed("stateText",true)
             .text(d=>d.abbr);
+            // .style("font-size"=r-5);
 
-        // append tooltip div
-        var toolTip = d3.select("circle")
-            .append("div")
-            .classed("d3-tip", true);
+         // text label for the x axis
+        svg.append("text")             
+            .attr("x", width)
+            .attr("y",  height+margin.top+height*.075)
+            .classed("aText",true)
+            .text("Poverty (%)");
 
-        //create mouseover event
-        chartGroup.on("mouseover", function(d) {
-            toolTip.style("aText", "active", "d3-tip")
-                .html(
-                    `<strong>poverty<strong><hr>obesity`)
-                .style("left", d3.event.pageX + "px")
-                .style("top", d3.event.pageY + "px");
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - margin.left)
+            .attr("x",0 - (height / 2))
+            .attr("dy", width-width*.5)
+            .attr("dx", height-height*1.2)
+            .classed("aText",true)
+            .text("Obesity (%)"); 
+
+        var toolTip=d3.tip()
+            .attr("class","d3-tip")
+            .offset([80,-60])
+            .html(function(d) {
+                return(`Poverty: <strong> ${d.poverty}</strong> <hr> Obesity: <strong> ${d.obesity} </strong>`)
+            });
+
+        chartGroup.call(toolTip);
+
+        circlesGroup.on("mouseover",function(d) { 
+            toolTip.show(d,this);
         })
 
-            // create mouseout event
-            .on("mouseout",function(){
-                toolTip.style("inactive")
-            });
+            .on("mouseout",function(d) {
+                toolTip.hide(d);
+            })
 
     }).catch(function(error) {
         console.log(error);  
