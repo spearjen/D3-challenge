@@ -38,36 +38,69 @@ function makeResponsive() {
     d3.csv('data.csv').then(function(lifeData) {
         console.log(lifeData);
 
-        var stateCircle = lifeData.map(data => data.abbr);
+        // stateCircle variables
+        var stateCircle = lifeData.map(d => d.abbr);
             console.log(stateCircle);
-
-        var poverty = lifeData.map(data => data.poverty);
-            console.log(poverty);
         
+        // convert everything to int
+        lifeData.forEach(function(data) {
+            data.poverty= +data.poverty;
+            console.log("Poverty:",data.poverty);
+        });
+
+        lifeData.forEach(function(data) {
+            data.obesity= +data.obesity;
+            console.log("Obesity:", data.obesity);
+        });
+
+        lifeData.forEach(function(data) {
+            data.age= +data.age;
+            console.log("Age:",data.age);
+        });
+
+        lifeData.forEach(function(data) {
+            data.income= +data.income;
+            console.log("Income:", data.income);
+        });
+
+        lifeData.forEach(function(data) {
+            data.smokes= +data.smokes;
+            console.log("Smokes:",data.smokes);
+        });
+
+        lifeData.forEach(function(data) {
+            data.healthcare= +data.healthcare;
+            console.log("Healthcare:", data.healthcare);
+        });
+
         // create scales 
         var xPoverty = d3.scaleLinear()
-            .domain ([0,d3.max(lifeData, d=>d.poverty)])
+            .domain(d3.extent(lifeData.map(d=>d.poverty)))
             .range([0,width]);
         
         var xAge = d3.scaleLinear()
-            .domain ([0,d3.max(lifeData, d=>d.age)])
+            .domain(d3.extent(lifeData.map(d=>d.age)))
             .range([0,width]);
 
         var xIncome = d3.scaleLinear()
-            .domain ([0,d3.max(lifeData, d=>d.income)])
+            .domain(d3.extent(lifeData.map(d=>d.income)))
             .range([0,width]);
+
+        // var xLinearList=[xPoverty,xAge,xIncome];
             
         var yObesity = d3.scaleLinear()
-            .domain ([d3.max(lifeData, d=>d.obesity),0])
+            .domain(d3.extent(lifeData.map(d=>d.obesity)))
             .range([height,0]);
     
         var ySmokes = d3.scaleLinear()
-            .domain ([d3.max(lifeData, d=>d.smokes),0])
+            .domain(d3.extent(lifeData.map(d=>d.smokes)))
             .range([height,0]);
 
         var yHealthcare = d3.scaleLinear()
-            .domain ([d3.max(lifeData, d=>d.healthcare),0])
+            .domain(d3.extent(lifeData.map(d=>d.healthcare)))
             .range([height,0]);
+
+        // var yLinearList=[yObesity,ySmokes,yIncome];
 
         // create axes
         var xAxis = d3.axisBottom(xPoverty);
@@ -79,7 +112,6 @@ function makeResponsive() {
             .call(xAxis);
         
         chartGroup.append("g")
-
             .call(yAxis);
 
         // // circle generator
@@ -92,21 +124,24 @@ function makeResponsive() {
             .data(lifeData)
             .enter()
             .append("circle")
+            // .append(d=>d.abbr)
             .classed("stateCircle",true)
-            .attr("cx", d=>xPoverty(d.poverty)/2)
-            .attr("cy", d=>yObesity(d.obesity)/2)
-            .attr("r", 10);
+            .attr("cx", d=>xPoverty(d.poverty))
+            .attr("cy", d=>yObesity(d.obesity))
+            .attr("r", 15)
+            .classed("stateText",true)
+            .text(d=>d.abbr);
 
         // append tooltip div
-        var toolTip = d3.select("body")
+        var toolTip = d3.select("circle")
             .append("div")
             .classed("d3-tip", true);
 
         //create mouseover event
         chartGroup.on("mouseover", function(d) {
-            toolTip.style("active", "d3-tip")
+            toolTip.style("aText", "active", "d3-tip")
                 .html(
-                    `<strong>${d.poverty}<strong><hr>${d.obesity}`)
+                    `<strong>poverty<strong><hr>obesity`)
                 .style("left", d3.event.pageX + "px")
                 .style("top", d3.event.pageY + "px");
         })
