@@ -1,124 +1,127 @@
-// @TODO: YOUR CODE HERE!
-var svgWidth = 960;
-var svgHeight = 500;
+// code for the chart function that automatically resizes
+function makeResponsive() {
 
-var chartMargin = {
-    top:30,
-    right:30,
-    bottom:30,
-    left:30
-};
+    // empty the svg if it isn't already empty when the browser loads; remove and replace with a resized version
+    var svgArea = d3.select("body").select("svg");
 
-var chartWidth = svgWidth-chartMargin.left-chartMargin.right;
-var chartHeight = svgHeight-chartMargin.top-chartMargin.bottom;
+    // clear svg if not empty    
+    if (!svgArea.empty()) {
+        svg.Area.remove();
+    }
 
-var svg = d3
-    .select("body")
-    .append("svg")
-    .attr("height",svgHeight)
-    .attr("width",svgWidth);
+    // svg wrapper dimensions are determined by browser width and height
+    var svgWidth = 1000;
+    var svgHeight = 600;
 
-var chartGroup = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    var margin = {
+        top:50,
+        right:50,
+        bottom:50,
+        left:50
+    };
 
+    var width = svgWidth-margin.left-margin.right;
+    var height = svgHeight-margin.top-margin.bottom;
 
+    // append svg element
+    var svg = d3
+        .select(".scatter")
+        .append("svg")
+        .attr("height",svgHeight)
+        .attr("width",svgWidth);
+
+    // append group element
+    var chartGroup = svg.append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    //read .csv
     d3.csv('data.csv').then(function(lifeData) {
         console.log(lifeData);
-    
-    
-    var state = lifeData.map(data => data.state);
-    console.log(state);
 
-    var age = lifeData.map(data => data.age);
-    console.log(age);
+        var stateCircle = lifeData.map(data => data.abbr);
+            console.log(stateCircle);
 
-    var healthcare = lifeData.map(data => data.healthcare);
-    console.log(healthcare);
-
-    var healthcareHigh = lifeData.map(data => data.healthcareHigh);
-    console.log(healthcareHigh);
-
-    var healthcareLow = lifeData.map(data => data.healthcareLow);
-    console.log(healthcareLow);
-
-    var income = lifeData.map(data => data.income);
-    console.log(income);
-
-    var obesity = lifeData.map(data => data.obesity);
-    console.log(obesity);    
-    
-    var obesityHigh = lifeData.map(data => data.obesityHigh);
-    console.log(obesityHigh);      
-    
-    var obesityLow = lifeData.map(data => data.obesityLow);
-    console.log(obesityLow);    
-
-    var poverty = lifeData.map(data => data.poverty);
-    console.log(poverty);   
-
-    var smokes = lifeData.map(data => data.smokes);
-    console.log(smokes);    
-    
-    var smokesHigh = lifeData.map(data => data.smokesHigh);
-    console.log(smokesHigh);   
-    
-    var smokesLow = lifeData.map(data => data.smokesLow);
-    console.log(smokesLow);    
-    
-    var stateCircle = lifeData.map(data => data.abbr);
-    console.log(abbr);
-    
-    var xBandScale = d3.scaleBand()
-        .domain(lifeData.map(d=>d.stateCircle)
-        .range([0,width]);
-
-    var yLinearScale1 = d3.scaleLinear()
-        .domain ([0,d3.max(lifeData, d=>d.age)])
-        .range([height,0]);
-
-    var yLinearScale2 = d3.scaleLinear()
-        .domain ([0,d3.max(lifeData, d=>d.healthcare)])
-        .range([height,0]);
-
-    var yLinearScale3 = d3.scaleLinear()
-        .domain ([0,d3.max(lifeData, d=>d.income)])
-        .range([height,0]);
-
-    var yLinearScale4 = d3.scaleLinear()
-        .domain ([0,d3.max(lifeData, d=>d.obesity)])
-        .range([height,0]);
-
-    var yLinearScale5 = d3.scaleLinear()
-        .domain ([0,d3.max(lifeData, d=>d.poverty)])
-        .range([height,0]);
+        var poverty = lifeData.map(data => data.poverty);
+            console.log(poverty);
         
-    var yLinearScale4 = d3.scaleLinear()
-        .domain ([0,d3.max(lifeData, d=>d.smokes)])
-        .range([height,0]);
+        // create scales 
+        var xPoverty = d3.scaleLinear()
+            .domain ([0,d3.max(lifeData, d=>d.poverty)])
+            .range([0,width]);
+        
+        var xAge = d3.scaleLinear()
+            .domain ([0,d3.max(lifeData, d=>d.age)])
+            .range([0,width]);
+
+        var xIncome = d3.scaleLinear()
+            .domain ([0,d3.max(lifeData, d=>d.income)])
+            .range([0,width]);
+            
+        var yObesity = d3.scaleLinear()
+            .domain ([d3.max(lifeData, d=>d.obesity),0])
+            .range([height,0]);
     
-    var bottomAxis = d3.axisBottom(xBandScale);
-    var leftAxis = d2.axisLeft(yLinearScalre).ticks(10);
+        var ySmokes = d3.scaleLinear()
+            .domain ([d3.max(lifeData, d=>d.smokes),0])
+            .range([height,0]);
 
-    chartGroup.append("g")
-        .attr('transform',`translate(0,${chartHeight})`)
-        .call(botomAxis);
+        var yHealthcare = d3.scaleLinear()
+            .domain ([d3.max(lifeData, d=>d.healthcare),0])
+            .range([height,0]);
 
-    chartGroup.selectAll()
-        .data(lifeData)
-        .enter()
-        .append("circle")
-        .attr("class", "scattter")
-        .attr("x", d=>xBandScale(d.stateCircle))
-        .attr("y", d=>yLinearScale1(d.age))
-        // .attr("y", d=>yLinearScale2(d.healthcare))
-        // .attr("y", d=>yLinearScale3(d.income))
-        // .attr("y", d=>yLinearScale4(d.obesity))
-        // .attr("y", d=>yLinearScale5(d.poverty))
-        // .attr("y", d=>yLinearScale6(d.smokes))
-        .attr("width",xBandScale.bandwidth())
-        .attr("height", d=>chartHeight-yLinearScale1(d.age));
+        // create axes
+        var xAxis = d3.axisBottom(xPoverty);
+        var yAxis = d3.axisLeft(yObesity);
 
-});.catch(function(error) {
-    console.log(error);
-});
+        // append axes
+        chartGroup.append("g")
+            .attr('transform',`translate(0,${height})`)
+            .call(xAxis);
+        
+        chartGroup.append("g")
+
+            .call(yAxis);
+
+        // // circle generator
+        // var stateCircle = d3.circle()
+        //     .cx(d=>xLinearScale2(d.healthcare))
+        //     .cy(d=>yLinearScale3(d.income));
+
+        // append circle
+        chartGroup.selectAll(".scatter")
+            .data(lifeData)
+            .enter()
+            .append("circle")
+            .classed("stateCircle",true)
+            .attr("cx", d=>xPoverty(d.poverty)/2)
+            .attr("cy", d=>yObesity(d.obesity)/2)
+            .attr("r", 10);
+
+        // append tooltip div
+        var toolTip = d3.select("body")
+            .append("div")
+            .classed("d3-tip", true);
+
+        //create mouseover event
+        chartGroup.on("mouseover", function(d) {
+            toolTip.style("active", "d3-tip")
+                .html(
+                    `<strong>${d.poverty}<strong><hr>${d.obesity}`)
+                .style("left", d3.event.pageX + "px")
+                .style("top", d3.event.pageY + "px");
+        })
+
+            // create mouseout event
+            .on("mouseout",function(){
+                toolTip.style("inactive")
+            });
+
+    }).catch(function(error) {
+        console.log(error);  
+    });
+}
+
+makeResponsive();
+
+d3.select(window).on("resize", makeResponsive);
 
