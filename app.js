@@ -1,6 +1,6 @@
 //state abbreviations not appearing on screen, show in 
 //does not resize for smaller screen
-//MS not on chart - do I add padding?
+// Obesity axis label moves badly on resize
 
 // code for the chart function that automatically resizes
 function makeResponsive() {
@@ -118,7 +118,7 @@ function makeResponsive() {
         chartGroup.append("g")
             .call(yAxis);
 
-        var r = 10
+        var r = 15
 
         // append circle
         var circlesGroup=chartGroup.selectAll(".scatter")
@@ -136,15 +136,18 @@ function makeResponsive() {
 
          // text label for the x axis
         svg.append("text")             
-            .attr("x", width+width*.01)
-            .attr("y",  height+height*.5)
+            .attr("x", width-150)
+            .attr("y",  height+margin.top+25)
             .classed("aText",true)
+            .attr("dy", "1em")
             .text("Poverty (%)");
 
         svg.append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", width-width*.75)
-            .attr("x", height-height*1.75)
+            .attr("y", -margin.left+50)
+            .attr("x", -margin.top)
+            .attr("dx","-12.5em")
+            .attr("dy","12.5em")
             .classed("aText",true)
             .text("Obesity (%)"); 
 
