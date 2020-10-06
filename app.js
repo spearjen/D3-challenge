@@ -1,4 +1,4 @@
-//state abbreviations not appearing on screen, show in console
+//state abbreviations not appearing on screen, show in 
 //does not resize for smaller screen
 
 // code for the chart function that automatically resizes
@@ -133,17 +133,15 @@ function makeResponsive() {
 
          // text label for the x axis
         svg.append("text")             
-            .attr("x", width)
-            .attr("y",  height+margin.top+height*.075)
+            .attr("x", width+width*.1)
+            .attr("y",  height+height*.5)
             .classed("aText",true)
             .text("Poverty (%)");
 
         svg.append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", 0 - margin.left)
-            .attr("x",0 - (height / 2))
-            .attr("dy", width-width*.5)
-            .attr("dx", height-height*1.2)
+            .attr("y", width-width*.75)
+            .attr("x", height-height*1.75)
             .classed("aText",true)
             .text("Obesity (%)"); 
 
