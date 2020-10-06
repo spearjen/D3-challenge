@@ -1,5 +1,6 @@
 //state abbreviations not appearing on screen, show in 
 //does not resize for smaller screen
+//MS not on chart - do I add padding?
 
 // code for the chart function that automatically resizes
 function makeResponsive() {
@@ -79,15 +80,15 @@ function makeResponsive() {
         // create scales 
         var xPoverty = d3.scaleLinear()
             .domain(d3.extent(lifeData.map(d=>d.poverty)))
-            .range([0,width+200]);
+            .range([0,width]);
         
         var xAge = d3.scaleLinear()
             .domain(d3.extent(lifeData.map(d=>d.age)))
-            .range([0,width+200]);
+            .range([0,width]);
 
         var xIncome = d3.scaleLinear()
             .domain(d3.extent(lifeData.map(d=>d.income)))
-            .range([0,width+200]);
+            .range([0,width+500]);
 
         // var xLinearList=[xPoverty,xAge,xIncome];
             
@@ -117,6 +118,8 @@ function makeResponsive() {
         chartGroup.append("g")
             .call(yAxis);
 
+        var r = 10
+
         // append circle
         var circlesGroup=chartGroup.selectAll(".scatter")
             .data(lifeData)
@@ -126,14 +129,14 @@ function makeResponsive() {
             .classed("stateCircle",true)
             .attr("cx", d=>xPoverty(d.poverty))
             .attr("cy", d=>yObesity(d.obesity))
-            .attr("r", 15)
+            .attr("r", r)
             .classed("stateText",true)
-            .text(d=>d.abbr);
-            // .style("font-size"=r-5);
+            .text(d=>d.abbr)
+            .style("font-size",r-5);
 
          // text label for the x axis
         svg.append("text")             
-            .attr("x", width+width*.1)
+            .attr("x", width+width*.01)
             .attr("y",  height+height*.5)
             .classed("aText",true)
             .text("Poverty (%)");
@@ -149,7 +152,7 @@ function makeResponsive() {
             .attr("class","d3-tip")
             .offset([80,-60])
             .html(function(d) {
-                return(`Poverty: <strong> ${d.poverty}</strong> <hr> Obesity: <strong> ${d.obesity} </strong>`)
+                return(`State: <strong> ${d.state}</strong> </br> Poverty: <strong> ${d.poverty}</strong> </br> Obesity: <strong> ${d.obesity} </strong>`)
             });
 
         chartGroup.call(toolTip);
