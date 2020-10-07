@@ -118,25 +118,30 @@ function makeResponsive() {
         chartGroup.append("g")
             .call(yAxis);
 
-        var r = 15
+        var r = 12;
 
         // append circle
         var circlesGroup=chartGroup.selectAll(".scatter")
             .data(lifeData)
             .enter()
-            .append("circle")
+        circlesGroup.append("circle")
             // .append(d=>d.abbr)
             .classed("stateCircle",true)
             .attr("cx", d=>xPoverty(d.poverty))
             .attr("cy", d=>yObesity(d.obesity))
             .attr("r", r)
             .classed("stateText",true)
-            .text(d=>d.abbr)
-            .style("font-size",r-5);
-
+        circlesGroup.append("text")
+            .text(function(d) {
+                return d.abbr;
+            })
+            .attr("dx", d=>xPoverty(d.poverty) - r/1.5)
+            .attr("dy", d=>yObesity(d.obesity) + r/4.5)
+            .style("font-size",r-2);
+            
          // text label for the x axis
         svg.append("text")             
-            .attr("x", width-150)
+            .attr("x", width-margin.left)
             .attr("y",  height+margin.top+25)
             .classed("aText",true)
             .attr("dy", "1em")
@@ -145,7 +150,7 @@ function makeResponsive() {
         svg.append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", -margin.left+50)
-            .attr("x", -margin.top)
+            .attr("x", -margin.top-50)
             .attr("dx","-12.5em")
             .attr("dy","12.5em")
             .classed("aText",true)
